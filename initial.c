@@ -110,6 +110,7 @@ int main(){
 
 	if((fp = fopen("estoque.txt", "rb")) == NULL){ // primeiro dia 	
 
+		printf("n tenho arquivo\n") ; 
 		scanf("%lld", &tamanho_estoque) ; 
 		tamanho_estoque = 0;
 		scanf("%lf", &saldo_vendas) ;
@@ -118,7 +119,9 @@ int main(){
 
 	else{
 
-	    fscanf(fp, "%lld", &tamanho_estoque) ; 
+		printf("tenho arquivo\n") ; 
+
+	    fscanf(fp, "%lld", &tamanho_estoque) ; 	
 		fscanf(fp, "%lf", &saldo_vendas) ; 
 
 		produtos = (produto_t *) realloc(produtos, sizeof(produto_t)*tamanho_estoque) ; 
@@ -126,9 +129,6 @@ int main(){
 		printf("tamanho do estoque: %lld\n", tamanho_estoque);		
 
 		fread(produtos, sizeof(produto_t), tamanho_estoque, fp) ; 
-
-		remove("estoque.txt") ; 
-		fflush(fp);
 
 	}
 
@@ -145,10 +145,10 @@ int main(){
 
 
             // finalizar dia -> gravar infos num arquivo (FE) 
-			fprintf(fp, "%lld ", tamanho_estoque) ;
-			fprintf(fp, "%.2lf ", saldo_vendas) ; 
+			fprintf(fp, "%lld\n", tamanho_estoque) ;
+			fprintf(fp, "%lf\n", saldo_vendas) ; 
 
-			fwrite(produtos, sizeof(produto_t), tamanho_estoque, fp) ; 
+			fwrite(produtos, sizeof(produto_t), tamanho_estoque, fp) ;
 
 			fclose(fp) ; 
 
