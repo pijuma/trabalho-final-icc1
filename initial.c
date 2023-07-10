@@ -6,8 +6,6 @@
    José Carlos Andrde do Nascimento - nºUSP: 12549450 ,   
    Pietra Gullo Salgado Chaves - nºUSP: 14603822 
 
-   Documentação: 
-
 */
 
 // Inclusao das bibliotecas utilizadas no projeto
@@ -168,7 +166,7 @@ int main(void){
 	produtos = (produto_t*)calloc(1, sizeof(produto_t)); 
 
 	if((fp = fopen("estoque", "rb")) == NULL){  	
-		// Caso o arquivo nao exista, é criado
+		// Caso o arquivo nao exista, le o tamanho do estoque e o saldo inicial pela entrada padrao
 
 		scanf("%lld", &tamanho_estoque) ; 
 		tamanho_estoque = 0;
@@ -177,9 +175,9 @@ int main(void){
 	}
 
 	else{
-		// Caso o arquivo ja exista
+		// Caso o arquivo ja exista, le o tamanho do estoque e o saldo inicial pelo arquivo
 
-	    fscanf(fp, "%lld ", &tamanho_estoque) ; 	
+	    	fscanf(fp, "%lld ", &tamanho_estoque) ; 	
 		fscanf(fp, "%lf ", &saldo_vendas) ; 
 
 		produtos = (produto_t *) realloc(produtos, sizeof(produto_t)*tamanho_estoque) ; 
@@ -198,7 +196,7 @@ int main(void){
 		char tipo[3] ; scanf("%s", tipo) ; 
 
 		if(!strcmp("FE", tipo)){
-
+			// Abre o estoque no modo write-binary e salva as informaçoes no arquivo
 			if((fp = fopen("estoque", "wb")) == NULL){
 				exit(1) ; 
 			}
