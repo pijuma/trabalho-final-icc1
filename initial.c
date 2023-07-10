@@ -14,7 +14,7 @@
 
 // aumentar o estoque -> codigo, qtd (AE) - um produto 
 
-// modificar preço -> codigo e novo preço (MP)
+
 
 // venda -> codigo DOS produtoS -> deve imprimir os nomes, preços e o total (VE)
 
@@ -81,6 +81,15 @@ void IP(produto_t **produtos, long long int *tam, produto_t *atual){
 	strcpy(((*produtos)[(*tam)-1]).nome, atual->nome) ;   
 	((*produtos)[(*tam)-1]).qtd = atual->qtd ; ((*produtos)[(*tam)-1]).price = atual->price ; 
 
+}
+
+// consultar estoque -> listar codigo nome, qtd de tudo (CE)
+void consultaEstoque(produto_t **produtos, long long int *tam){
+	for (int i = 0; i < (*tam); i++){
+		printf("%lld %s %d\n", i, (*produtos)[i].nome, (*produtos)[i].qtd);
+	}
+	for(int i = 0; i < 50; i++) printf("-");
+	printf("\n");
 }
 
 int main(){
