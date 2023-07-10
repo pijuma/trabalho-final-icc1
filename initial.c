@@ -8,25 +8,7 @@
 
 */
 
-// codigos produtos -> 0, ... n -> atribuidos sequencialmente -> altera quando retira um cara (?)
-
-// Inserir produto no mercado -> nome, qtd, preço (IP)
-
-// aumentar o estoque -> codigo, qtd (AE) - um produto 
-
-
-
 // venda -> codigo DOS produtoS -> deve imprimir os nomes, preços e o total (VE)
-
-// consultar estoque -> listar codigo nome, qtd de tudo (CE)
-
-// consultar saldo -> imprime saldo (CS)
-
-// finalizar dia -> gravar infos num arquivo (FE) 
-
-// inicio: ler arquivo do dia anterior p salvar as infos do estoque no começo 
-
-// saldo -> inicial + vendas 
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -41,8 +23,6 @@ struct Produto{
 } ;
 
 typedef struct Produto produto_t ; 
-
-void IP(produto_t **produtos, long long int *tam, produto_t *atual) ;
 
 void leia_produto(char **nome, long long int *qtd, double *price){
 
@@ -71,6 +51,9 @@ void leia_produto(char **nome, long long int *qtd, double *price){
 
 }
 
+
+// Inserir produto no mercado -> nome, qtd, preço (IP)
+
 void IP(produto_t **produtos, long long int *tam, produto_t *atual){
 
 	(*tam)++ ; 
@@ -83,14 +66,38 @@ void IP(produto_t **produtos, long long int *tam, produto_t *atual){
 
 }
 
+// aumentar o estoque -> codigo, qtd (AE) - um produto 
+
+void AE(produto_t *produtos, long long int code, long long int qtd){ produtos[code].qtd += qtd ; }
+
+// modificar preço -> codigo e novo preço (MP)
+
+void MP(produto_t *produtos, long long int code, double price){ produtos[code].price = price ; }
+
+// consultar saldo -> imprime saldo (CS)
+
+void CS(double saldo){
+	
+	printf("%.2lf\n", saldo) ;
+	
+	for(int i = 1 ; i <= 50 ; i++) printf("-") ; 
+	printf("\n") ; 
+
+}
+
 // consultar estoque -> listar codigo nome, qtd de tudo (CE)
-void consultaEstoque(produto_t **produtos, long long int *tam){
-	for (int i = 0; i < (*tam); i++){
-		printf("%lld %s %d\n", i, (*produtos)[i].nome, (*produtos)[i].qtd);
+
+void CE(produto_t *produtos, long long int tam){
+	
+	for (int i = 0; i < tam; i++){
+		printf("%d %s %lld\n", i, produtos[i].nome, produtos[i].qtd);
 	}
+
 	for(int i = 0; i < 50; i++) printf("-");
 	printf("\n");
+
 }
+
 
 int main(){
 
@@ -101,11 +108,8 @@ int main(){
 	produto_t *produtos ; 
 	produtos = (produto_t*)calloc(1, sizeof(produto_t)); 
 
-	if((fp = fopen("estoque.txt", "rb")) == NULL){ // primeiro dia 
+	if((fp = fopen("estoque.txt", "rb")) == NULL){ // primeiro dia 	
 
-		printf("null \n");		
-
-			
 		scanf("%lld", &tamanho_estoque) ; 
 		tamanho_estoque = 0;
 		scanf("%lf", &saldo_vendas) ;
@@ -113,9 +117,6 @@ int main(){
 	}
 
 	else{
-		printf("arquivo exiat \n");		
-
-
 
 	    fscanf(fp, "%lld", &tamanho_estoque) ; 
 		fscanf(fp, "%lf", &saldo_vendas) ; 
@@ -142,6 +143,8 @@ int main(){
 				exit(1) ; 
 			}
 
+
+            // finalizar dia -> gravar infos num arquivo (FE) 
 			fprintf(fp, "%lld ", tamanho_estoque) ;
 			fprintf(fp, "%.2lf ", saldo_vendas) ; 
 
@@ -153,7 +156,7 @@ int main(){
 
 		}
 
-		if(!strcmp("IP", tipo)){
+		else if(!strcmp("IP", tipo)){
 
 			char *nome ; long long int qtd ; double price ; 
 			leia_produto(&nome, &qtd, &price) ; 
@@ -173,6 +176,20 @@ int main(){
 			printf("adicionei %s\n", nome) ; 
 
 		}
+
+		else if(!strcmp("AE", tipo)){
+			long long int code, qtd ; scanf("%lld %lld", &code, &qtd) ; 
+			AE(produtos, code, qtd) ; 
+		}
+
+		else if(!strcmp("MP", tipo)){
+			long long int code ; double price ; scanf("%lld %lf", &code, &price) ;
+			MP(produtos, code, price) ;  
+		}
+
+		else if(!strcmp("CS", tipo)) CS(saldo_vendas) ;
+
+		else if(!strcmp("CE", tipo)) CE(produtos, tamanho_estoque) ;
 
 	}
 
