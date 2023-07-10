@@ -35,14 +35,16 @@
 struct Produto{
 	
 	char *nome ;
-	int qtd ; 
+	long long int qtd ; 
 	double price ; 
 
 } ;
 
-typedef struct Produto p ; 
+typedef struct Produto produto_t ; 
 
-void leia_produto(char **nome, int *qtd, double *price){
+void IP(produto_t **produtos, long long int *tam, produto_t *atual) ;
+
+void leia_produto(char **nome, long long int *qtd, double *price){
 
 	char c ; 
 	
@@ -51,20 +53,28 @@ void leia_produto(char **nome, int *qtd, double *price){
 	int i = 0 ; 
 
 	for(; ; i++){
-		scanf("%c", c) ; 
+		scanf("%c", &c) ; 
 		if(c == ' ') break ; 
-		*nome = realloc(*nome, (i+1)*sizeof(char)) ;
-		nome[i] = c ; 
+		*nome = (char *) realloc(*nome, (i+1)*sizeof(char)) ;
+		(*nome)[i] = c ; 
 	}
 
-	*nome = realloc(*nome, (i+1)*sizeof(char)) ; 
-	nome[i] = '\0' ;
+	*nome = (char *) realloc(*nome, (i+1)*sizeof(char)) ; 
+	(*nome)[i] = '\0' ;
 
-	scanf("%d", *qtd) ; scanf("%lf", *price) ; 
+	scanf("%lld", qtd) ; scanf("%lf", price) ; 
 
 }
 
-void IP(){
+void IP(produto_t **produtos, long long int *tam, produto_t *atual){
+
+	(*tam)++ ; 
+	(*produtos) = (produto_t *) realloc(*produtos, (*tam)*sizeof(produto_t)) ;
+
+	((*produtos)[(*tam)-1]).nome = (char *) calloc(strlen(atual->nome)+1, sizeof(char)) ; 
+
+	strcpy(((*produtos)[(*tam)-1]).nome, atual->nome) ;   
+	((*produtos)[(*tam)-1]).qtd = atual->qtd ; ((*produtos)[(*tam)-1]).price = atual->price ; 
 
 }
 
@@ -72,13 +82,72 @@ int main(){
 
 	FILE *fp ; 
 
-	int tamanho_estoque = 0 ; double saldo_vendas = 0.00 ; 
+	long long int tamanho_estoque = 0 ; double saldo_vendas = 0.00 ; 
 
-	if((fp = fopen("estoque.txt", "r")) == NULL){ // primeiro dia 
+	produto_t *produtos ; 
+	produtos = NULL ; 
+
+	if((fp = fopen("estoque.txt", "rb")) == NULL){ // primeiro dia 
 		
-		scanf("%d", &tamanho_estoque) ; 
+		scanf("%lld", &tamanho_estoque) ; 
 		scanf("%lf", &saldo_vendas) ;
 
 	}
+
+	else{
+
+	    fscanf(fp, "%lld", &tamanho_estoque) ; 
+		fscanf(fp, "%lf", &saldo_vendas) ; 
+
+		produtos = (produto_t *) realloc(produtos, sizeof(produto_t)*tamanho_estoque) ; 
+
+		fread(produtos, sizeof(produto_t), tamanho_estoque, fp) ; 
+
+		remove("estoque.txt") ; 
+
+	}
+
+	while(1){
+
+		char tipo[3] ; scanf("%s", tipo) ; 
+
+		if(!strcmp("FE", tipo)){
+
+			if((fp = fopen("estoque.txt", "wb")) == NULL){
+				printf("deu merda\n") ; 
+				exit(1) ; 
+			}
+
+			fprintf(fp, "%lld", tamanho_estoque) ;
+			fprintf(fp, "%.2lf", saldo_vendas) ; 
+
+			fwrite(produtos, sizeof(produto_t), tamanho_estoque, fp) ; 
+
+			fclose(fp) ; 
+
+			break ; 
+
+		}
+
+		if(!strcmp("IP", tipo)){
+			
+			char *nome ; long long int qtd ; double price ; 
+			leia_produto(&nome, &qtd, &price) ; 
+			
+			produto_t atual ; atual.nome = NULL ;
+
+			atual.nome = (char *) calloc(strlen(nome)+1, sizeof(char)) ;
+
+			strcpy(atual.nome, nome) ;  
+
+			atual.qtd = qtd ; atual.price = price ; 
+
+			IP(&produtos, &tamanho_estoque, &atual) ; 
+
+		}
+
+	}
+
+	// to do - desalocar as parada
 
 }
