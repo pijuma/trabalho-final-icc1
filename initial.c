@@ -76,7 +76,7 @@ void IP(produto_t **produtos, long long int *tam, produto_t *atual){
 	(*tam)++ ; 
 	(*produtos) = (produto_t *) realloc(*produtos, (*tam)*sizeof(produto_t)) ;
 
-	((*produtos)[(*tam)-1]).nome = (char *) calloc(strlen(atual->nome)+1, sizeof(char)) ; 
+	((*produtos)[(*tam)-1]).nome = (char *) calloc(strlen(atual->nome), sizeof(char)) ; 
 
 	strcpy(((*produtos)[(*tam)-1]).nome, atual->nome) ;   
 	((*produtos)[(*tam)-1]).qtd = atual->qtd ; ((*produtos)[(*tam)-1]).price = atual->price ; 
@@ -90,25 +90,35 @@ int main(){
 	long long int tamanho_estoque = 0 ; double saldo_vendas = 0.00 ; 
 
 	produto_t *produtos ; 
-	produtos = NULL ; 
+	produtos = (produto_t*)calloc(1, sizeof(produto_t)); 
 
 	if((fp = fopen("estoque.txt", "rb")) == NULL){ // primeiro dia 
-		
+
+		printf("null \n");		
+
+			
 		scanf("%lld", &tamanho_estoque) ; 
+		tamanho_estoque = 0;
 		scanf("%lf", &saldo_vendas) ;
 
 	}
 
 	else{
+		printf("arquivo exiat \n");		
+
+
 
 	    fscanf(fp, "%lld", &tamanho_estoque) ; 
 		fscanf(fp, "%lf", &saldo_vendas) ; 
 
 		produtos = (produto_t *) realloc(produtos, sizeof(produto_t)*tamanho_estoque) ; 
 
+		printf("tamanho do estoque: %lld\n", tamanho_estoque);		
+
 		fread(produtos, sizeof(produto_t), tamanho_estoque, fp) ; 
 
 		remove("estoque.txt") ; 
+		fflush(fp);
 
 	}
 
@@ -123,8 +133,8 @@ int main(){
 				exit(1) ; 
 			}
 
-			fprintf(fp, "%lld", tamanho_estoque) ;
-			fprintf(fp, "%.2lf", saldo_vendas) ; 
+			fprintf(fp, "%lld ", tamanho_estoque) ;
+			fprintf(fp, "%.2lf ", saldo_vendas) ; 
 
 			fwrite(produtos, sizeof(produto_t), tamanho_estoque, fp) ; 
 
