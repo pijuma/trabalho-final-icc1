@@ -52,12 +52,17 @@ void leia_produto(char **nome, long long int *qtd, double *price){
 	
 	int i = 0 ; 
 
-	for(; ; i++){
-		scanf("%c", &c) ; 
+	scanf(" %c", &c) ; 
+
+	for(; ; i++){ 
+		//printf("%c", c) ; 
 		if(c == ' ') break ; 
 		*nome = (char *) realloc(*nome, (i+1)*sizeof(char)) ;
-		(*nome)[i] = c ; 
+		(*nome)[i] = c ;
+		scanf("%c", &c) ; 
 	}
+
+	i++ ; 
 
 	*nome = (char *) realloc(*nome, (i+1)*sizeof(char)) ; 
 	(*nome)[i] = '\0' ;
@@ -130,10 +135,12 @@ int main(){
 		}
 
 		if(!strcmp("IP", tipo)){
-			
+
 			char *nome ; long long int qtd ; double price ; 
 			leia_produto(&nome, &qtd, &price) ; 
 			
+			//printf("adicionei %s\n", nome) ; 
+
 			produto_t atual ; atual.nome = NULL ;
 
 			atual.nome = (char *) calloc(strlen(nome)+1, sizeof(char)) ;
@@ -143,6 +150,8 @@ int main(){
 			atual.qtd = qtd ; atual.price = price ; 
 
 			IP(&produtos, &tamanho_estoque, &atual) ; 
+
+			printf("adicionei %s\n", nome) ; 
 
 		}
 
