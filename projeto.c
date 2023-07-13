@@ -177,7 +177,7 @@ int main(void){
 	else{
 		// Caso o arquivo ja exista, le o tamanho do estoque e o saldo inicial pelo arquivo
 
-	    	fscanf(fp, "%lld ", &tamanho_estoque) ; 	
+	    fscanf(fp, "%lld ", &tamanho_estoque) ; 	
 		fscanf(fp, "%lf ", &saldo_vendas) ; 
 
 		produtos = (produto_t *) realloc(produtos, sizeof(produto_t)*tamanho_estoque) ; 
@@ -185,7 +185,7 @@ int main(void){
 
 		for ( int i = 0; i < tamanho_estoque ; i++)
 		{
-			fread(&produtos[i], sizeof(produto_t), 1, fp) ; 
+            fscanf(fp, " %s %lld %lf", produtos[i].nome, &produtos[i].qtd, &produtos[i].price) ;
 		}
 
 	}
@@ -197,6 +197,9 @@ int main(void){
 
 		if(!strcmp("FE", tipo)){
 			// Abre o estoque no modo write-binary e salva as informaçoes no arquivo
+            
+            if(fp != NULL) fclose(fp) ;
+
 			if((fp = fopen("estoque", "wb")) == NULL){
 				exit(1) ; 
 			}
@@ -205,9 +208,9 @@ int main(void){
 			fprintf(fp, "%lld \n", tamanho_estoque) ;
 			fprintf(fp, "%lf \n", saldo_vendas) ; 
 
-			for (int i = 0; i < tamanho_estoque ; i++)
+            for (int i = 0; i < tamanho_estoque ; i++)
 			{
-				fwrite(&produtos[i], sizeof(produto_t), 1, fp);
+                fprintf(fp, " %s %lld %lf\n", produtos[i].nome, produtos[i].qtd, produtos[i].price) ;
 			}
 
 			fclose(fp) ; 
